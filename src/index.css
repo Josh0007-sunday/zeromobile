@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap');
+
+@font-face {
+  font-family: 'Hero';
+  src: url('./assets/font/OTF/Hero-Regular.otf') format('opentype'),
+    url('./assets/font/TTF/Hero-Regular.ttf') format('truetype');
+  font-weight: 400;
+  /* Regular */
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Hero';
+  src: url('./assets/font/OTF/Hero-Bold.otf') format('opentype'),
+    url('./assets/font/TTF/Hero-Bold.ttf') format('truetype');
+  font-weight: 700;
+  /* Bold/Black */
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Hero';
+  src: url('./assets/font/OTF/Hero-Light.otf') format('opentype'),
+    url('./assets/font/TTF/Hero-Light.ttf') format('truetype');
+  font-weight: 300;
+  /* Light */
+  font-style: normal;
+}
+
+.font-hero {
+  font-family: 'Hero', sans-serif;
+}
+
+body {
+  font-family: "Helvetica Neue", "Inter Tight", Helvetica, Arial, sans-serif;
+  letter-spacing: -0.02em;
+  /* Classic neo-grotesque tight tracking */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
