@@ -76,9 +76,9 @@ export default function Business() {
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full text-sm font-semibold text-gray-600 mb-8">
             Now in beta — sign up free
           </div>
-          <h1 className="font-hero text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-[0.9] tracking-tighter text-gray-900 mb-6 whitespace-nowrap">
+          <h1 className="font-hero text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-[0.9] tracking-tighter text-gray-900 mb-6">
             Accept <span className="text-gray-300">crypto.</span>{' '}
-            Grow <span className="text-gray-300">faster.</span>
+            <span className="block sm:inline">Grow <span className="text-gray-300">faster.</span></span>
           </h1>
           <p className="text-base md:text-lg text-gray-400 max-w-2xl leading-relaxed mb-8">
             Zero Commerce lets small businesses accept stablecoin payments on Solana — instant settlement, near-zero fees, and full self-custody.
