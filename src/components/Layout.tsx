@@ -37,7 +37,7 @@ export default function Layout({ children, isDarkTheme, setIsDarkTheme }: {
         <div className="flex items-center px-6 md:px-12 py-4 md:py-5 w-full">
           <div className="flex items-center flex-1">
             <Link to="/">
-              <img src={appLogo} alt="Zero Logo" className={`h-6 md:h-8 transition-all duration-1000 ${isDarkTheme ? 'filter-none' : 'filter invert contrast-200'}`} />
+              <img src={appLogo} alt="Zero Logo" className="h-10 md:h-12 rounded-xl object-contain transition-all duration-300 hover:opacity-90" />
             </Link>
             <Link to="/" className={`ml-3 font-bold text-lg md:text-xl tracking-tight hidden sm:block transition-colors duration-1000 ${isDarkTheme ? 'text-white' : 'text-gray-900'}`}>Zero mobile</Link>
           </div>
@@ -58,9 +58,18 @@ export default function Layout({ children, isDarkTheme, setIsDarkTheme }: {
           </div>
 
           <div className="flex items-center justify-end flex-1 gap-3">
+            <a
+              href="https://expo.dev/accounts/blockchainjoshs-organization/projects/zero-mobile/builds/cc3a0d1e-510e-4f25-ae76-5f7a86c15cae"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden md:flex items-center gap-2 px-5 py-2.5 bg-[#2b2b2b] text-white rounded-full text-sm font-semibold hover:bg-black transition-all shadow-[0_4px_14px_0_rgba(0,0,0,0.1)]"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+              Download
+            </a>
             <button
               onClick={() => { setIsWaitlistOpen(true); setIsFormLoading(true) }}
-              className="hidden md:block px-6 py-2.5 bg-[#2b2b2b] text-white rounded-full text-sm font-semibold hover:bg-black transition-all shadow-[0_4px_14px_0_rgba(0,0,0,0.1)]"
+              className={`hidden md:block px-6 py-2.5 rounded-full text-sm font-semibold transition-all border ${isDarkTheme ? 'border-gray-700 text-gray-300 hover:text-white hover:border-gray-500' : 'border-gray-200 text-gray-600 hover:text-black hover:border-gray-400'}`}
             >
               Join waitlist
             </button>
@@ -85,9 +94,19 @@ export default function Layout({ children, isDarkTheme, setIsDarkTheme }: {
             <Link to="/business" className={`text-left text-lg font-semibold py-2 transition-colors ${isDarkTheme ? 'text-gray-300 hover:text-white' : 'text-gray-700 hover:text-black'}`} onClick={() => setIsMenuOpen(false)}>Business</Link>
             <Link to="/about" className={`text-left text-lg font-semibold py-2 transition-colors ${isDarkTheme ? 'text-gray-300 hover:text-white' : 'text-gray-700 hover:text-black'}`} onClick={() => setIsMenuOpen(false)}>About us</Link>
             <div className="pt-2 flex flex-col gap-3">
+              <a
+                href="https://expo.dev/accounts/blockchainjoshs-organization/projects/zero-mobile/builds/cc3a0d1e-510e-4f25-ae76-5f7a86c15cae"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setIsMenuOpen(false)}
+                className="w-full py-3.5 bg-[#2b2b2b] text-white rounded-2xl text-base font-bold hover:bg-black transition-all flex items-center justify-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                Download App
+              </a>
               <button
                 onClick={() => { setIsWaitlistOpen(true); setIsFormLoading(true); setIsMenuOpen(false) }}
-                className="w-full py-3.5 bg-[#2b2b2b] text-white rounded-2xl text-base font-bold hover:bg-black transition-all"
+                className={`w-full py-3.5 rounded-2xl text-base font-bold transition-all border ${isDarkTheme ? 'border-gray-700 text-gray-300' : 'border-gray-200 text-gray-700'}`}
               >
                 Join waitlist
               </button>
@@ -103,7 +122,7 @@ export default function Layout({ children, isDarkTheme, setIsDarkTheme }: {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12">
           <div className="max-w-xs">
             <div className="flex items-center mb-6">
-              <img src={appLogo} alt="Zero Logo" className="h-8 filter invert contrast-200" />
+              <img src={appLogo} alt="Zero Logo" className="h-12 rounded-xl object-contain" />
             </div>
             <p className="text-gray-500 text-sm leading-relaxed mb-6">
               Bringing financing to the 1.5 billion unbanked. Enabling cost-efficient and instant payments, worldwide.
