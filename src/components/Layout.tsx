@@ -22,7 +22,7 @@ export default function Layout({ children, isDarkTheme, setIsDarkTheme }: {
   const [dlStatus, setDlStatus] = useState<'idle' | 'checking' | 'allowed' | 'denied' | 'error'>('idle')
   const [dlError, setDlError] = useState('')
 
-  const DOWNLOAD_URL = 'https://expo.dev/accounts/blockchainjoshs-organization/projects/zero-mobile/builds/cc3a0d1e-510e-4f25-ae76-5f7a86c15cae'
+  const DOWNLOAD_URL = 'https://expo.dev/accounts/blockchainjoshs-organization/projects/zero-mobile/builds/b9192784-1889-4076-a7ba-d379ba613872'
 
   const openDownload = () => {
     setDlEmail('')
@@ -36,7 +36,7 @@ export default function Layout({ children, isDarkTheme, setIsDarkTheme }: {
     setDlStatus('checking')
     setDlError('')
     try {
-      const res = await fetch(`${BACKEND_URL}/api/zerospend/waitlist/check?email=${encodeURIComponent(dlEmail.trim())}`)
+      const res = await fetch(`${VITE_BACKEND_URL}/api/zerospend/waitlist/check?email=${encodeURIComponent(dlEmail.trim())}`)
       const json = await res.json().catch(() => ({}))
       if (!res.ok || json.success === false) throw new Error(json.error || 'Verification failed. Please try again.')
       setDlStatus(json.onList ? 'allowed' : 'denied')
@@ -48,9 +48,8 @@ export default function Layout({ children, isDarkTheme, setIsDarkTheme }: {
   const jotformRef = useRef<HTMLDivElement>(null)
   const location = useLocation()
 
-  const BACKEND_URL = (
+  const VITE_BACKEND_URL = (
     (import.meta.env as any).VITE_BACKEND_URL ||
-    (import.meta.env as any).BACKEND_URL ||
     'http://localhost:3001'
   ).replace(/\/$/, '')
 
@@ -68,7 +67,7 @@ export default function Layout({ children, isDarkTheme, setIsDarkTheme }: {
     setWlStatus('sending')
     setWlError('')
     try {
-      const res = await fetch(`${BACKEND_URL}/api/zerospend/waitlist`, {
+      const res = await fetch(`${VITE_BACKEND_URL}/api/zerospend/waitlist`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: wlEmail.trim(), name: wlName.trim() }),
