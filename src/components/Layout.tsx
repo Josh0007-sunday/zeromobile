@@ -11,10 +11,77 @@ export default function Layout({ children, isDarkTheme, setIsDarkTheme }: {
   setIsDarkTheme: (v: boolean) => void
 }) {
   const [isWaitlistOpen, setIsWaitlistOpen] = useState(false)
-  const [isFormLoading, setIsFormLoading] = useState(true)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [wlName, setWlName] = useState('')
+  const [wlEmail, setWlEmail] = useState('')
+  const [wlStatus, setWlStatus] = useState<'idle' | 'sending' | 'done' | 'error'>('idle')
+  const [wlError, setWlError] = useState('')
+  const [wlDuplicate, setWlDuplicate] = useState(false)
+  const [isDownloadOpen, setIsDownloadOpen] = useState(false)
+  const [dlEmail, setDlEmail] = useState('')
+  const [dlStatus, setDlStatus] = useState<'idle' | 'checking' | 'allowed' | 'denied' | 'error'>('idle')
+  const [dlError, setDlError] = useState('')
+
+  const DOWNLOAD_URL = 'https://expo.dev/accounts/blockchainjoshs-organization/projects/zero-mobile/builds/cc3a0d1e-510e-4f25-ae76-5f7a86c15cae'
+
+  const openDownload = () => {
+    setDlEmail('')
+    setDlStatus('idle')
+    setDlError('')
+    setIsDownloadOpen(true)
+  }
+
+  const verifyDownload = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setDlStatus('checking')
+    setDlError('')
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/zerospend/waitlist/check?email=${encodeURIComponent(dlEmail.trim())}`)
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok || json.success === false) throw new Error(json.error || 'Verification failed. Please try again.')
+      setDlStatus(json.onList ? 'allowed' : 'denied')
+    } catch (err: any) {
+      setDlError(err?.message || 'Could not reach the server. Please try again.')
+      setDlStatus('error')
+    }
+  }
   const jotformRef = useRef<HTMLDivElement>(null)
   const location = useLocation()
+
+  const BACKEND_URL = (
+    (import.meta.env as any).VITE_BACKEND_URL ||
+    (import.meta.env as any).BACKEND_URL ||
+    'http://localhost:3001'
+  ).replace(/\/$/, '')
+
+  const openWaitlist = () => {
+    setWlName('')
+    setWlEmail('')
+    setWlStatus('idle')
+    setWlError('')
+    setWlDuplicate(false)
+    setIsWaitlistOpen(true)
+  }
+
+  const submitWaitlist = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setWlStatus('sending')
+    setWlError('')
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/zerospend/waitlist`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: wlEmail.trim(), name: wlName.trim() }),
+      })
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok || json.success === false) throw new Error(json.error || 'Signup failed. Please try again.')
+      setWlDuplicate(!!json.alreadyJoined)
+      setWlStatus('done')
+    } catch (err: any) {
+      setWlError(err?.message || 'Could not reach the server. Please try again.')
+      setWlStatus('error')
+    }
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -58,17 +125,15 @@ export default function Layout({ children, isDarkTheme, setIsDarkTheme }: {
           </div>
 
           <div className="flex items-center justify-end flex-1 gap-3">
-            <a
-              href="https://expo.dev/accounts/blockchainjoshs-organization/projects/zero-mobile/builds/cc3a0d1e-510e-4f25-ae76-5f7a86c15cae"
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              onClick={openDownload}
               className="hidden md:flex items-center gap-2 px-5 py-2.5 bg-[#2b2b2b] text-white rounded-full text-sm font-semibold hover:bg-black transition-all shadow-[0_4px_14px_0_rgba(0,0,0,0.1)]"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
               Download
-            </a>
+            </button>
             <button
-              onClick={() => { setIsWaitlistOpen(true); setIsFormLoading(true) }}
+              onClick={openWaitlist}
               className={`hidden md:block px-6 py-2.5 rounded-full text-sm font-semibold transition-all border ${isDarkTheme ? 'border-gray-700 text-gray-300 hover:text-white hover:border-gray-500' : 'border-gray-200 text-gray-600 hover:text-black hover:border-gray-400'}`}
             >
               Join waitlist
@@ -94,18 +159,15 @@ export default function Layout({ children, isDarkTheme, setIsDarkTheme }: {
             <Link to="/business" className={`text-left text-lg font-semibold py-2 transition-colors ${isDarkTheme ? 'text-gray-300 hover:text-white' : 'text-gray-700 hover:text-black'}`} onClick={() => setIsMenuOpen(false)}>Business</Link>
             <Link to="/about" className={`text-left text-lg font-semibold py-2 transition-colors ${isDarkTheme ? 'text-gray-300 hover:text-white' : 'text-gray-700 hover:text-black'}`} onClick={() => setIsMenuOpen(false)}>About us</Link>
             <div className="pt-2 flex flex-col gap-3">
-              <a
-                href="https://expo.dev/accounts/blockchainjoshs-organization/projects/zero-mobile/builds/cc3a0d1e-510e-4f25-ae76-5f7a86c15cae"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setIsMenuOpen(false)}
+              <button
+                onClick={() => { openDownload(); setIsMenuOpen(false) }}
                 className="w-full py-3.5 bg-[#2b2b2b] text-white rounded-2xl text-base font-bold hover:bg-black transition-all flex items-center justify-center gap-2"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                 Download App
-              </a>
+              </button>
               <button
-                onClick={() => { setIsWaitlistOpen(true); setIsFormLoading(true); setIsMenuOpen(false) }}
+                onClick={() => { openWaitlist(); setIsMenuOpen(false) }}
                 className={`w-full py-3.5 rounded-2xl text-base font-bold transition-all border ${isDarkTheme ? 'border-gray-700 text-gray-300' : 'border-gray-200 text-gray-700'}`}
               >
                 Join waitlist
@@ -182,7 +244,7 @@ export default function Layout({ children, isDarkTheme, setIsDarkTheme }: {
       {isWaitlistOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" onClick={() => setIsWaitlistOpen(false)}>
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-          <div className="relative z-10 bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
+          <div className="relative z-10 bg-white rounded-3xl shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between px-8 pt-8 pb-4 flex-shrink-0">
               <h3 className="text-2xl font-black text-gray-900">Reserve your spot</h3>
               <button onClick={() => setIsWaitlistOpen(false)} className="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors">
@@ -192,23 +254,122 @@ export default function Layout({ children, isDarkTheme, setIsDarkTheme }: {
               </button>
             </div>
             <div className="overflow-y-auto flex-1 relative">
-              {isFormLoading && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-white gap-4 z-10">
-                  <div className="w-10 h-10 border-4 border-gray-200 border-t-gray-900 rounded-full animate-spin" />
-                  <p className="text-gray-400 text-sm font-medium">Loading form...</p>
+              {wlStatus === 'done' ? (
+                <div className="flex flex-col items-center justify-center text-center px-8 py-12 gap-4">
+                  <div className="w-14 h-14 rounded-full bg-black flex items-center justify-center">
+                    <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <h4 className="text-xl font-black text-gray-900">{wlDuplicate ? "You're already on the list" : "You're on the list!"}</h4>
+                  <p className="text-gray-500 text-sm">We&apos;ll email <span className="font-semibold text-gray-900">{wlEmail}</span> when Zero mobile launches.</p>
+                  <button onClick={() => setIsWaitlistOpen(false)} className="mt-2 px-8 py-3 bg-black text-white rounded-full text-sm font-bold hover:bg-gray-800 transition-all">
+                    Done
+                  </button>
                 </div>
+              ) : (
+                <form onSubmit={submitWaitlist} className="px-8 pb-8 pt-2 flex flex-col gap-4">
+                  <p className="text-gray-500 text-sm">Be the first to know when Zero mobile launches.</p>
+                  <input
+                    type="text"
+                    value={wlName}
+                    onChange={e => setWlName(e.target.value)}
+                    placeholder="Your name (optional)"
+                    className="w-full px-5 py-3.5 rounded-2xl border border-gray-200 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-black transition-colors"
+                  />
+                  <input
+                    type="email"
+                    required
+                    value={wlEmail}
+                    onChange={e => setWlEmail(e.target.value)}
+                    placeholder="Email address"
+                    className="w-full px-5 py-3.5 rounded-2xl border border-gray-200 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-black transition-colors"
+                  />
+                  {wlStatus === 'error' && <p className="text-red-500 text-sm">{wlError}</p>}
+                  <button
+                    type="submit"
+                    disabled={wlStatus === 'sending'}
+                    className="w-full py-3.5 bg-black text-white rounded-2xl text-base font-bold hover:bg-gray-800 transition-all disabled:opacity-60"
+                  >
+                    {wlStatus === 'sending' ? 'Joining…' : 'Join waitlist'}
+                  </button>
+                </form>
               )}
-              <iframe
-                id="JotFormIFrame-waitlist"
-                title="Waitlist Form"
-                onLoad={() => setIsFormLoading(false)}
-                allowTransparency={true}
-                allow="geolocation; microphone; camera; fullscreen; payment"
-                src="https://form.jotform.com/260158004037043"
-                frameBorder="0"
-                style={{ minWidth: '100%', width: '100%', height: '600px', border: 'none', display: 'block', opacity: isFormLoading ? 0 : 1, transition: 'opacity 0.4s ease' }}
-                scrolling="yes"
-              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Download Gate Modal — verify waitlist membership before downloading */}
+      {isDownloadOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" onClick={() => setIsDownloadOpen(false)}>
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+          <div className="relative z-10 bg-white rounded-3xl shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-8 pt-8 pb-4 flex-shrink-0">
+              <h3 className="text-2xl font-black text-gray-900">Download the app</h3>
+              <button onClick={() => setIsDownloadOpen(false)} className="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors">
+                <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="overflow-y-auto flex-1 relative">
+              {dlStatus === 'allowed' ? (
+                <div className="flex flex-col items-center justify-center text-center px-8 py-12 gap-4">
+                  <div className="w-14 h-14 rounded-full bg-black flex items-center justify-center">
+                    <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <h4 className="text-xl font-black text-gray-900">You&apos;re on the list!</h4>
+                  <p className="text-gray-500 text-sm">Your download is ready — enjoy Zero mobile.</p>
+                  <a
+                    href={DOWNLOAD_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2 px-8 py-3.5 bg-black text-white rounded-full text-base font-bold hover:bg-gray-800 transition-all flex items-center gap-2"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                    Download App
+                  </a>
+                </div>
+              ) : dlStatus === 'denied' ? (
+                <div className="flex flex-col items-center justify-center text-center px-8 py-12 gap-4">
+                  <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center">
+                    <svg className="w-7 h-7 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h4 className="text-xl font-black text-gray-900">Not on the list yet</h4>
+                  <p className="text-gray-500 text-sm">Downloads are reserved for waitlist members. Join first — it takes seconds.</p>
+                  <button
+                    onClick={() => { setIsDownloadOpen(false); openWaitlist() }}
+                    className="mt-2 px-8 py-3.5 bg-black text-white rounded-full text-base font-bold hover:bg-gray-800 transition-all"
+                  >
+                    Join waitlist
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={verifyDownload} className="px-8 pb-8 pt-2 flex flex-col gap-4">
+                  <p className="text-gray-500 text-sm">Enter the email you joined the waitlist with to unlock your download.</p>
+                  <input
+                    type="email"
+                    required
+                    value={dlEmail}
+                    onChange={e => setDlEmail(e.target.value)}
+                    placeholder="Email address"
+                    className="w-full px-5 py-3.5 rounded-2xl border border-gray-200 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-black transition-colors"
+                  />
+                  {(dlStatus === 'error') && <p className="text-red-500 text-sm">{dlError}</p>}
+                  <button
+                    type="submit"
+                    disabled={dlStatus === 'checking'}
+                    className="w-full py-3.5 bg-black text-white rounded-2xl text-base font-bold hover:bg-gray-800 transition-all disabled:opacity-60"
+                  >
+                    {dlStatus === 'checking' ? 'Verifying…' : 'Verify & continue'}
+                  </button>
+                </form>
+              )}
             </div>
           </div>
         </div>
