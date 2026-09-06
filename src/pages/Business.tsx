@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import usdcLogo from '../assets/usdc.png'
 import solanaLogo from '../assets/solana.png'
-import businessHero from '../assets/businesshero.png'
 
 const features = [
   {
@@ -71,16 +70,19 @@ export default function Business() {
   return (
     <div className="bg-white text-gray-900">
       {/* Hero Section */}
-      <section className="relative bg-white">
-        <div className="max-w-7xl mx-auto px-6 pt-16 md:pt-24 flex flex-col items-center text-center">
+      <section className="relative overflow-hidden bg-white">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,#eef4f3_0%,transparent_70%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#f4f4f5_1px,transparent_1px),linear-gradient(to_bottom,#f4f4f5_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_0%,#000_60%,transparent_100%)]" />
+        <div className="relative max-w-7xl mx-auto px-6 pt-28 md:pt-36 pb-16 flex flex-col items-center text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full text-sm font-semibold text-gray-600 mb-8">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             Now in beta — sign up free
           </div>
           <h1 className="font-hero text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-[0.9] tracking-tighter text-gray-900 mb-6">
             Accept <span className="text-gray-300">crypto.</span>{' '}
             <span className="block sm:inline">Grow <span className="text-gray-300">faster.</span></span>
           </h1>
-          <p className="text-base md:text-lg text-gray-400 max-w-2xl leading-relaxed mb-8">
+          <p className="text-base md:text-lg text-gray-500 max-w-2xl leading-relaxed mb-10">
             Zero Commerce lets small businesses accept stablecoin payments on Solana — instant settlement, near-zero fees, and full self-custody.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
@@ -100,26 +102,19 @@ export default function Business() {
               Learn more
             </Link>
           </div>
-          <div className="flex items-center justify-center gap-6 mt-8 pt-8 border-t border-gray-100">
-            <div className="flex items-center gap-3">
-              <img src={usdcLogo} alt="USDC" className="w-7 h-7" />
-              <span className="text-sm text-gray-500">USDC</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <img src={solanaLogo} alt="SOL" className="w-7 h-7" />
-              <span className="text-sm text-gray-500">SOL</span>
-            </div>
-            <span className="text-gray-400 text-sm">+ more</span>
-          </div>
-        </div>
-        <div className="max-w-7xl mx-auto px-6 mt-12 flex justify-center">
-          <img
-            src={businessHero}
-            alt="Zero Commerce Dashboard"
-            className="w-full max-w-[1200px] object-contain shadow-2xl rounded-2xl"
-          />
         </div>
       </section>
+      <div className="flex items-center justify-center gap-6 py-10 border-b border-gray-100 bg-white">
+        <div className="flex items-center gap-3">
+          <img src={usdcLogo} alt="USDC" className="w-7 h-7" />
+          <span className="text-sm text-gray-500">USDC</span>
+        </div>
+        <div className="flex items-center gap-3">
+          <img src={solanaLogo} alt="SOL" className="w-7 h-7" />
+          <span className="text-sm text-gray-500">SOL</span>
+        </div>
+        <span className="text-gray-400 text-sm">+ more</span>
+      </div>
 
       {/* Features Grid */}
       <section className="py-24 px-6 max-w-7xl mx-auto">

@@ -22,7 +22,7 @@ export default function Layout({ children, isDarkTheme, setIsDarkTheme }: {
   const [dlStatus, setDlStatus] = useState<'idle' | 'checking' | 'allowed' | 'denied' | 'error'>('idle')
   const [dlError, setDlError] = useState('')
 
-  const DOWNLOAD_URL = 'https://expo.dev/accounts/blockchainjoshs-organization/projects/zero-mobile/builds/b9192784-1889-4076-a7ba-d379ba613872'
+  const DOWNLOAD_URL = 'https://expo.dev/accounts/blockchainjoshs-organization/projects/zero-mobile/builds/1bde9a5e-9131-4999-b724-21553ac59cbb'
 
   const openDownload = () => {
     setDlEmail('')
@@ -95,10 +95,12 @@ export default function Layout({ children, isDarkTheme, setIsDarkTheme }: {
   }, [setIsDarkTheme])
 
   const isActive = (path: string) => location.pathname === path
+  const isBusiness = location.pathname === '/business'
 
   return (
     <div className={`min-h-screen relative font-sans transition-colors duration-1000 ease-in-out ${isDarkTheme ? 'bg-black text-white' : 'bg-white text-gray-900'} selection:bg-gray-800 selection:text-white overflow-hidden`}>
-      {/* Navbar */}
+      {/* Navbar — floating pill on Business, standard bar everywhere else */}
+      {!isBusiness && (
       <nav className={`sticky top-0 z-50 backdrop-blur-xl w-full border-b transition-colors duration-1000 ${isDarkTheme ? 'bg-black/80 border-gray-800' : 'bg-white/80 border-gray-100'}`}>
         <div className="flex items-center px-6 md:px-12 py-4 md:py-5 w-full">
           <div className="flex items-center flex-1">
@@ -175,6 +177,83 @@ export default function Layout({ children, isDarkTheme, setIsDarkTheme }: {
           </div>
         )}
       </nav>
+      )}
+
+      {isBusiness && (
+      <nav className="fixed top-4 inset-x-4 z-50 md:inset-x-8">
+        <div className="max-w-5xl mx-auto flex items-center gap-2 rounded-full bg-white/90 backdrop-blur-xl border border-gray-200 shadow-lg px-4 md:px-5 py-2.5">
+          <Link to="/" className="flex items-center">
+            <img src={appLogo} alt="Zero Logo" className="h-8 rounded-lg object-contain" />
+          </Link>
+          <div className="hidden md:flex items-center gap-1 mx-auto">
+            <Link
+              to="/"
+              className={`px-4 py-2 text-sm font-semibold transition-colors rounded-full ${isActive('/') ? 'bg-gray-100 text-black' : 'text-gray-500 hover:text-black'}`}
+            >Personal</Link>
+            <Link
+              to="/business"
+              className={`px-4 py-2 text-sm font-semibold transition-colors rounded-full ${isActive('/business') ? 'bg-gray-100 text-black' : 'text-gray-500 hover:text-black'}`}
+            >Business</Link>
+            <Link
+              to="/about"
+              className={`px-4 py-2 text-sm font-semibold transition-colors rounded-full ${isActive('/about') ? 'bg-gray-100 text-black' : 'text-gray-500 hover:text-black'}`}
+            >About us</Link>
+          </div>
+          <div className="flex items-center gap-2 ml-auto">
+            <a
+              href="https://business.zeromobile.site/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:inline-flex px-5 py-2.5 bg-gray-900 text-white rounded-full text-sm font-bold hover:bg-black transition-all"
+            >
+              Launch App
+            </a>
+            <button
+              onClick={openWaitlist}
+              className="hidden md:block px-5 py-2.5 rounded-full text-sm font-semibold border border-gray-200 text-gray-600 hover:text-black hover:border-gray-400 transition-all"
+            >
+              Join waitlist
+            </button>
+            <button
+              onClick={() => setIsMenuOpen(m => !m)}
+              className="md:hidden p-2 rounded-lg text-gray-900"
+              aria-label="Toggle menu"
+            >
+              {isMenuOpen ? (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+              ) : (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {isMenuOpen && (
+          <div className="md:hidden mt-2 mx-auto max-w-5xl rounded-3xl border border-gray-200 bg-white shadow-xl px-6 py-6 flex flex-col gap-2">
+            <Link to="/" className="text-left text-lg font-semibold py-2 text-gray-700" onClick={() => setIsMenuOpen(false)}>Personal</Link>
+            <Link to="/business" className="text-left text-lg font-semibold py-2 text-gray-700" onClick={() => setIsMenuOpen(false)}>Business</Link>
+            <Link to="/about" className="text-left text-lg font-semibold py-2 text-gray-700" onClick={() => setIsMenuOpen(false)}>About us</Link>
+            <div className="pt-2 flex flex-col gap-3">
+              <a
+                href="https://business.zeromobile.site/"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setIsMenuOpen(false)}
+                className="w-full py-3.5 bg-gray-900 text-white rounded-2xl text-base font-bold text-center"
+              >
+                Launch App
+              </a>
+              <button
+                onClick={() => { openWaitlist(); setIsMenuOpen(false) }}
+                className="w-full py-3.5 rounded-2xl text-base font-bold border border-gray-200 text-gray-700"
+              >
+                Join waitlist
+              </button>
+            </div>
+          </div>
+        )}
+      </nav>
+      )}
 
       {children}
 
